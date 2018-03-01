@@ -5,7 +5,7 @@
 * [Mysql日常优化](#mysql日常优化)
    * [Mysql查看慢查询日志](#mysql查看慢查询日志)
    * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
-* [Nginx查看访问最频繁的IP并禁止某个异常IP](#nginx查看访问最频繁的IP并禁止某个异常ip)
+* [Nginx查看访问最频繁的IP并禁止某个异常IP](#nginx查看访问最频繁的ip并禁止某个异常ip)
 
 
 
