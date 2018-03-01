@@ -6,6 +6,8 @@
    * [Mysql查看慢查询日志](#mysql查看慢查询日志)
    * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
 * [Nginx查看访问最频繁的IP并禁止某个异常IP](#nginx查看访问最频繁的ip并禁止某个异常ip)
+   * [firewall-cmd](#firewall-cmd)
+   * [iptables](#iptables)
 
 
 
@@ -187,11 +189,39 @@ explain select count(id) as cnt from `your_table` where com_id = 1769 and ptype=
 1965 221.180.236.146
 [root@iZ9458z0ss9Z ~]# 
 ```
+
+## firewall-cmd
 假设我们感觉这个123.44.55.66太可疑了，如何用firewall禁用：
+先查看firewall是否开启：
+```
+[root@iZ9458z0ss9Z ~]# firewall-cmd --state
+running
+```
+running则为开启，再禁用123.44.55.66：
 ```
 [root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address="123.44.55.66" drop'
 ```
+
+## iptables
 如果未安装firewall-cmd，那么可以试试iptables:
 ```
-[root@iZ9458z0ss9Z ~]# iptables -I INPUT -s 123.44.55.66 -j DROP
+[root@iZ9458z0ss9Z ~]# cp /etc/sysconfig/iptables-config  /var/tmp   //先保存原先配置
+[root@iZ9458z0ss9Z ~]# iptables -I INPUT -s 123.44.55.66 -j DROP //添加拒绝的ip
+[root@iZ9458z0ss9Z ~]# service iptables save  //保存配置
+[root@iZ9458z0ss9Z ~]# service iptables restart //重启防火墙
 ```
+查看下添加成功否：
+```
+[root@iZ94won0vbvZ ~]# iptables -L  //查看iptables
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+DROP       all  --  123.44.55.66         anywhere            
+ACCEPT     all  --  anywhere             anywhere             ctstate RELATED,ESTABLISHED
+```
+如果发现是个误会，想解封123.44.55.66：
+```
+[root@iZ94won0vbvZ ~]# iptables -D INPUT -s 123.44.55.66 -j DROP
+[root@iZ94won0vbvZ ~]# iptables -L | grep 123.44.55   //发现找不到和123.44.55.66相关的规则了，解封成功！
+[root@iZ94won0vbvZ ~]# 
+```
+
