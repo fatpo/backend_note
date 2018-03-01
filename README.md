@@ -1,6 +1,7 @@
 * [服务访问不了或异常慢卡](#服务访问不了或异常慢卡)
-* [Java正在运行的进程CPU调优](#java正在运行的进程cpu调优)
-* [Python正在运行的进程CPU调优](#python正在运行的进程cpu调优)
+* [正在运行的业务进程CPU调优](#正在运行的业务进程CPU调优)
+  * [Java调优](#java调优)
+  * [Python调优](#python调优)
 * [Mysql日常优化](#mysql日常优化)
    * [Mysql查看慢查询日志](#mysql查看慢查询日志)
    * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
@@ -11,18 +12,20 @@
 ![Alt text](https://github.com/emaste-r/backend_note/blob/master/%E6%9C%8D%E5%8A%A1%E6%8E%92%E6%9F%A5.png)
 
 
-# Java正在运行的进程CPU调优
+# 正在运行的业务进程CPU调优
+
+## Java调优
 先找到CPU异常的PID：
 ```
-top -c
+[root@iZ9458z0ss9Z ~]# top -c
 ```
 然后查看该进程下的线程：
 ```
-top -Hp YOUR_PID
+[root@iZ9458z0ss9Z ~]# top -Hp YOUR_PID
 ```
 然后查看异常的线程：
 ```
-jstack YOUR_THREAD_PID
+[root@iZ9458z0ss9Z ~]# jstack YOUR_THREAD_PID
 ```
 如此，便能查看该线程到底在执行到哪一段代码会导致CPU异常：
 ```
@@ -58,14 +61,15 @@ jstack找不到pid文件。
 2、也有可能pid文件被自定义设置到别处，那么jstack /data/you/path/your.pid即可。
 ```
 
-# Python正在运行的进程CPU调优
+## Python调优
+
 本人版本：
 ```
 centos7+python2.7.5   
 ```
 安装gdb：
 ```
-sudo yum install gdb
+[root@iZ9458z0ss9Z ~]# sudo yum install gdb
 ```
 出现如下信息说明安装成功：
 ```
