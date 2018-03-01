@@ -107,6 +107,36 @@ py-bt               py-down             py-list             py-locals           
 (gdb) 
 ```
 
+# Mysql日常优化
+
+## Mysql查看慢查询日志
+首先要判断mysql是否开启慢查询、慢查询日志存放位置：
+```
+[root@iZ9458z0ss9Z ~]#  cat /etc/my.cnf| grep slow           
+slow_launch_time=2  # 表示如果建立线程花费了比这个值更长的时间,slow_launch_threads 计数器将增加
+slow_query_log=on   # 开启 慢查询
+slow_query_log_file=/data/log/your_slow_query.log  # log文件存放位置
+```
+万一没开启，怎么开启呢？
+```
+mysql> set global slow_query_log='ON'; 
+mysql> set global slow_query_log_file='/usr/local/mysql/data/slow.log';
+mysql> set global long_query_time=1;  # 超过一秒的查询会被记录
+```
+查看慢查询日志，主要关心参数：   
+Query_time = 查询耗费多少秒 = 3.088468    
+Rows_examined = 影响的行数 = 43817    
+```
+[root@iZ9458z0ss9Z ~]# tail -f /data/log/your_slow_query.log
+# Time: 180301 16:17:20
+# User@Host: root[root] @ iZ9458z0ss9Z [10.24.245.83]
+# Thread_id: 9601563  Schema: miaoyan  QC_hit: No
+# Query_time: 3.088468  Lock_time: 0.000084  Rows_sent: 1  Rows_examined: 43817
+# Rows_affected: 0
+SET timestamp=1519892240;
+select count(id) as cnt from `your_table` where com_id = 1867 and ptype = 1;
+```
+
 
 
 
