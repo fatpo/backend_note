@@ -197,9 +197,21 @@ explain select count(id) as cnt from `your_table` where com_id = 1769 and ptype=
 [root@iZ9458z0ss9Z ~]# firewall-cmd --state
 running
 ```
-running则为开启，再禁用123.44.55.66：
+禁用123.44.55.66：
 ```
-[root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address="123.44.55.66" drop'
+[root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='123.44.55.66' reject"
+success
+```
+重启生效:
+```
+[root@iZ9458z0ss9Z ~]# firewall-cmd --reload
+success
+[root@iZ9458z0ss9Z ~]# iptables -L | grep '123'
+REJECT     all  --  123.44.55.66         anywhere             reject-with icmp-port-unreachable
+```
+解封IP，把--add-rich-rule改成--remove-rich-rule:
+```
+[root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --remove-rich-rule="rule family='ipv4' source address='123.44.55.66' reject"
 ```
 
 ## iptables
