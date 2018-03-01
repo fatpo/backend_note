@@ -1,6 +1,9 @@
 * [服务访问不了或异常慢卡](#服务访问不了或异常慢卡)
 * [Java正在运行的进程CPU调优](#java正在运行的进程cpu调优)
 * [Python正在运行的进程CPU调优](#python正在运行的进程cpu调优)
+* [Mysql日常优化](#mysql日常优化)
+   * [Mysql查看慢查询日志](#mysql查看慢查询日志)
+   * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
 
 
 
@@ -137,6 +140,26 @@ SET timestamp=1519892240;
 select count(id) as cnt from `your_table` where com_id = 1867 and ptype = 1;
 ```
 
-
-
+## Mysql查看正在执行的sql
+查看当前的sql执行情况：
+```
+mysql> show processlist;
++----------+---------+----------------------+----------------------+---------+-------+----------+------------------+
+| Id       | User    | Host                 | db                   | Command | Time  | State    | Info             |
++----------+---------+----------------------+----------------------+---------+-------+----------+------------------+
+| 15490667 | seafile | localhost:45682      | ccnet-db             | Sleep   |    23 |          | NULL             |
+| 15490668 | seafile | localhost:45684      | seafile-db           | Sleep   |     3 |          | NULL             |
+| 15496875 | seafile | localhost:60158      | ccnet-db             | Sleep   |  1530 |          | NULL             |
+| 15498263 | seafile | localhost:35184      | seafile-db           | Sleep   |   630 |          | NULL             |
+| 9604402  | root    | iZ9458z0ss9Z:22193   | your_db              | Query   |     1 | Sending data                                                                  | select count(id) as cnt from `your_table` where com_id = 1769 and ptype=1 |
+```
+Sleep状态的项不需要管，如果看到一个Query状态的sql，Time(秒)还很大，可能卡住了，个人感觉select的sql如果卡住了，可以先kill掉：
+```
+kill 9604402
+```
+再慢慢分析是否有索引：
+```
+explain select count(id) as cnt from `your_table` where com_id = 1769 and ptype=1;
+```
+如果是Update的sql，那就还是慢慢等执行完毕吧，一般不会耗费太多时间，除非你全表update。
 
