@@ -1,7 +1,7 @@
-* [服务访问不了或异常慢卡](#服务访问不了或异常慢卡)
-* [正在运行的业务进程CPU调优](#正在运行的业务进程CPU调优)
-  * [Java调优](#java调优)
-  * [Python调优](#python调优)
+* [服务访问不了或异常慢卡](#服务访问不了或异常慢卡)  
+* [正在运行的业务进程CPU调优](#服务访问不了或异常慢卡)
+   * [Java调优](#java调优)
+   * [Python调优](#python调优)
 * [Mysql日常优化](#mysql日常优化)
    * [Mysql查看慢查询日志](#mysql查看慢查询日志)
    * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
@@ -203,7 +203,20 @@ running则为开启，再禁用123.44.55.66：
 ```
 
 ## iptables
-如果未安装firewall-cmd，那么可以试试iptables:
+如果未安装firewall-cmd，那么可以试试iptables，先看iptables服务跑起来没：
+```
+[root@iZ94won0vbvZ ~]# service iptables status
+```
+如果没有跑起来：
+```
+重启后生效
+    开启： chkconfig iptables on
+    关闭： chkconfig iptables off
+即时生效，重启后失效
+    开启： service iptables start
+    关闭： service iptables stop
+```
+添加拒绝ip的规则：
 ```
 [root@iZ9458z0ss9Z ~]# cp /etc/sysconfig/iptables-config  /var/tmp   //先保存原先配置
 [root@iZ9458z0ss9Z ~]# iptables -I INPUT -s 123.44.55.66 -j DROP //添加拒绝的ip
