@@ -5,6 +5,8 @@
 * [Mysql日常优化](#mysql日常优化)
    * [Mysql查看慢查询日志](#mysql查看慢查询日志)
    * [Mysql查看正在执行的sql](#mysql查看正在执行的sql)
+* [Nginx查看访问最频繁的IP并禁止某个异常IP](#nginx查看访问最频繁的IP并禁止某个异常ip)
+
 
 
 
@@ -167,3 +169,29 @@ explain select count(id) as cnt from `your_table` where com_id = 1769 and ptype=
 ```
 如果是Update的sql，那就还是慢慢等执行完毕吧，一般不会耗费太多时间，除非你全表update。
 
+
+# Nginx查看访问最频繁的IP并禁止某个异常IP
+
+查看排名前10个访问最频繁的IP：
+```
+[root@iZ9458z0ss9Z ~]# awk '{a[$1]+=1;}END{for(i in a){print a[i] " " i;}}' /var/log/nginx/access.log |sort -gr | head -10                          
+11929 123.44.55.66
+9727 119.137.52.231
+8132 111.18.73.48
+2926 115.191.176.18
+2407 183.198.212.108
+2322 218.11.141.142
+2257 183.225.60.104
+2229 183.40.130.198
+1990 115.207.217.131
+1965 221.180.236.146
+[root@iZ9458z0ss9Z ~]# 
+```
+假设我们感觉这个123.44.55.66太可疑了，如何用firewall禁用：
+```
+[root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address="123.44.55.66" drop'
+```
+如果未安装firewall-cmd，那么可以是使用iptables:
+```
+[root@iZ9458z0ss9Z ~]# iptables -I INPUT -s 123.44.55.66 -j DROP
+```
