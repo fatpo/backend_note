@@ -191,7 +191,7 @@ explain select count(id) as cnt from `your_table` where com_id = 1769 and ptype=
 ```
 [root@iZ9458z0ss9Z ~]# firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address="123.44.55.66" drop'
 ```
-如果未安装firewall-cmd，那么可以是使用iptables:
+如果未安装firewall-cmd，那么可以试试iptables:
 ```
 [root@iZ9458z0ss9Z ~]# iptables -I INPUT -s 123.44.55.66 -j DROP
 ```
