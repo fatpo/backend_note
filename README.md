@@ -355,3 +355,9 @@ done
 df -h >$runpath/hdd_alarm/hdd_tmp.log
 
 ```
+放到定时任务，每15分钟跑一次：
+```
+[root@iZ9458z0ss9Z script]# crontab  -l
+*/15 * * * *  cd /data/your_script_path/;./hdd_alarm.sh >/dev/null 2>&1
+```
+
