@@ -13,7 +13,7 @@
 
 
 # 服务访问不了或异常慢卡
-![Alt text](https://github.com/emaste-r/backend_note/blob/master/%E6%9C%8D%E5%8A%A1%E6%8E%92%E6%9F%A5.png)
+![Alt text](https://github.com/emaste-r/backend_note/blob/master/%E6%9C%8D%E5%8A%A1%E8%AE%BF%E9%97%AE%E4%B8%8D%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E.jpg)
 
 
 # 正在运行的业务进程CPU调优
