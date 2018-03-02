@@ -8,7 +8,7 @@
 * [Nginx查看访问最频繁的IP并禁止某个异常IP](#nginx查看访问最频繁的ip并禁止某个异常ip)
    * [firewall-cmd](#firewall-cmd)
    * [iptables](#iptables)
-
+* [监控硬盘并邮件报警](#监控硬盘并邮件报警)
 
 
 
@@ -250,3 +250,108 @@ ACCEPT     all  --  anywhere             anywhere             ctstate RELATED,ES
 [root@iZ94won0vbvZ ~]# 
 ```
 
+# 监控硬盘并邮件报警
+
+我们查看硬盘使用率 df -h：
+```
+[root@iZ9458z0ss9Z script]# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        40G   14G   24G  36% /
+devtmpfs        3.9G     0  3.9G   0% /dev
+tmpfs           3.9G   28K  3.9G   1% /dev/shm
+tmpfs           3.9G  408M  3.5G  11% /run
+tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/vdb        197G  124G   64G  66% /data
+tmpfs           783M     0  783M   0% /run/user/0
+```
+
+如果从未配置过mail：
+```
+[root@001 ~]# vim /etc/mail.rc #添加如下内容
+set from=xxxx@126.com  # from：对方收到邮件时显示的发件人
+set smtp=smtp.126.com  # smtp：指定第三方发邮件的smtp服务器地址
+set smtp-auth-user=xx@126.com  # set smtp-auth-user：第三方发邮件的用户名
+set smtp-auth-password=xxx  # set smtp-auth-password：用户名对应的密码,有些邮箱填的是授权码
+set smtp-auth=login # smtp-auth：SMTP的认证方式，默认是login，也可以改成CRAM-MD5或PLAIN方式
+```
+测试下：
+```
+[root@iZ9458z0ss9Z script]# echo "测试邮件" | mail -s "测试主题" xihuanjianguo@163.com
+```
+
+写发送邮件的脚本：
+```
+[root@iZ9458z0ss9Z script]# cat sendmail.sh 
+#!/bin/bash
+# by kin
+source /etc/profile
+content=$1
+address=$2
+echo ${content} | mail -s ${content} ${address}
+```
+
+写监控硬盘脚本：
+```
+[root@iZ9458z0ss9Z ~]# cat /data/your_script_path/hdd_alarm.sh 
+#!/bin/sh
+# by kin
+source /etc/profile;
+runpath='/data/your_script_path'
+
+# 定义send函数来调用我们的sendmail.sh脚本
+send()
+{
+  ./sendmail.sh $1 your_email_1@163.com
+  ./sendmail.sh $1 your_email_2@163.com
+}
+
+# 如果不存在hdd_alarm文件夹则创建之
+if [ ! -d  $runpath/hdd_alarm ]
+then
+        mkdir $runpath/hdd_alarm
+fi
+
+# 获取本机的IP地址
+Host_IP=`ifconfig |grep "inet "|grep -v 127.0.0.1|grep -v 'inet 10.'|grep -v '192.168'|awk '{print $2}'`
+
+
+# 获取df硬盘容量参数的后两列使用率a和路径b，遍历a和b
+df -h | awk '{print $(NF-1),$NF}'|awk '{if($NF!=$1){print $0}}'|sed 's/\%//g'|sed '1d'|while read a b;
+do
+
+# 如果a和b有一个是空字符串则跳过
+if [ -z $a ] || [ -z $b ] 
+then      
+        :
+else
+        # 从日志中获取上一次报警的使用率
+        old_used=`cat $runpath/hdd_alarm/hdd_tmp.log 2>/dev/null|grep "$b$"|awk '{print $(NF-1)}'|sed 's/\%//g'`
+        
+        # 如果使用率不超过80 或者 相比上一次没有增加，则跳过
+        if [ ! -z $old_used ] && [ $old_used -eq $a ] &&  [ $a -le 80 ]
+        then
+                continue;
+        fi
+        
+        # 如果使用率确实>=80，则调用send()发送邮件...
+        if  [ $a -gt 80  ] ; 
+        then
+                msg="Hdd_alarm:$Host_IP-$b-Reach-$a-precent"
+                echo "$msg" #>>./Hdd_alarm.log
+                send "$msg"
+                
+                # 如果调用send()的返回值不是0，说明有错误
+                if [ $? -ne 0 ]; 
+                then
+                        echo -e "############Send Fail#############"
+                fi
+        fi
+
+
+fi
+done
+
+# 把df信息存入到日志中，方便下一次对比
+df -h >$runpath/hdd_alarm/hdd_tmp.log
+
+```
