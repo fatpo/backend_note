@@ -228,3 +228,9 @@ chmod +x /etc/init.d/supervisor
 ```
 
 
+# 6、想进一步了解开机启动的这边
+
+
+[fatpo.github.io/#/我干运维那些事/生产实战/linux私房菜/ubuntu18.04用sysv-rc-conf管理开机自启动](https://fatpo.github.io/#/%E6%88%91%E5%B9%B2%E8%BF%90%E7%BB%B4%E9%82%A3%E4%BA%9B%E4%BA%8B/%E7%94%9F%E4%BA%A7%E5%AE%9E%E6%88%98/linux%E7%A7%81%E6%88%BF%E8%8F%9C/ubuntu18.04%E7%94%A8sysv-rc-conf%E7%AE%A1%E7%90%86%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8)
+
+
