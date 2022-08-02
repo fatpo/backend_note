@@ -6,10 +6,17 @@ https://www.cnblogs.com/clsn/p/10040334.html#12-acmesh
 ```
 https://github.com/acmesh-official/acme.sh
 ```
-写在前面：
+写在前面1：
 ```
 如果要搞 ssl 证书，前提是 DNS 已经配置好了映射。
 ```
+写在前面2：
+```
+在用 acme 命令前，nginx 不要提前配置 443 端口！！
+在用 acme 命令前，nginx 不要提前配置 443 端口！！
+在用 acme 命令前，nginx 不要提前配置 443 端口！！
+```
+
 
 第一次申请证书，让我们弄个账户：
 ```
