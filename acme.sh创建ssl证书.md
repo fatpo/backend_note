@@ -1,7 +1,16 @@
-教程：
+中文教程：
 ```
 https://www.cnblogs.com/clsn/p/10040334.html#12-acmesh
 ```
+英文教程：
+```
+https://github.com/acmesh-official/acme.sh
+```
+写在前面：
+```
+如果要搞 ssl 证书，前提是 DNS 已经配置好了映射。
+```
+
 第一次申请证书，让我们弄个账户：
 ```
 root@shell:~/.acme.sh#  acme.sh --issue  -d api.abc.xyz  --nginx
