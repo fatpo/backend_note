@@ -2,8 +2,10 @@
 某些 ubuntu18.04 竟然 vim 下中文乱码，难以理解。
 
 # 解决
-vi ~/.vimrc
 ```
+vi ~/.vimrc
+
+
 """"""""""""""""""""""""""""""""""""
 """=>编码设置<="""
 """"""""""""""""""""""""""""""""""""
@@ -18,6 +20,18 @@ set fileencodings=utf-8
 set termencoding=utf-8
 
 "设置语言编码"
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+```
+
+或者暂时不要中文注释，因为你本来就中文乱码：
+```
+vi ~/.vimrc
+
+set encoding=utf-8
+set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
+set fileencodings=utf-8
+set termencoding=utf-8
 set langmenu=zh_CN.UTF-8
 set helplang=cn
 ```
