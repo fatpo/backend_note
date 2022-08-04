@@ -52,6 +52,10 @@ sudo apt install nfs-common
 mount -t nfs 1.2.3.4:/data/uploads ./uploads
 ```
 
+一般来说，如果 timeout，就是端口没打开，检查下：
+* 服务端是否开启 111 和 2049 端口
+* 客户端 telnet 111 和 2049 端口是否成功
+
 自此，ubuntu18.04 就可以玩转 nfs 啦。
 
 后面的只是磁盘相关的知识，可以不看。
