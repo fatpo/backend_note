@@ -9,3 +9,14 @@ UnicodeEncodeError: 'latin-1' codec can't encode characters in position 0-5: ord
 ```
 root@shell: export PYTHONIOENCODING=utf-8
 ```
+
+# crontab不服气
+发现虽然用shell执行python脚本已经没问题了，但是crontab依旧报错，解决方案是加上编码集：
+先查看自己的编码：
+```
+echo $LANG
+```
+然后crontab -e:
+```
+55 7 * * * LANG=en_US.UTF-8 /usr/bin/python3 /shell/python1.py >>/tmp/python1.log 2>&1
+```
