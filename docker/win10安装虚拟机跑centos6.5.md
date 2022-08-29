@@ -22,6 +22,11 @@ http://ftp.jaist.ac.jp/pub/Linux/CentOS-vault/6.5/isos/x86_64/
 在 " 常规 " 选项卡上，在 " 启动 类型" 中单击 " 自动"。
 ```
 
+教程：
+```
+https://docs.microsoft.com/zh-cn/windows-server/virtualization/hyper-v/best-practices-analyzer/The-Hyper-V-Virtual-Machine-Management-service-should-be-configured-to-start
+```
+
 ## 创建VM
 啊，就是傻瓜化，有个快速创建，也有自己创建，可以配置文件夹什么的，点下一步即可。
 
