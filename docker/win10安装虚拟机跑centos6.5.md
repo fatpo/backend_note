@@ -3,6 +3,11 @@
 http://ftp.jaist.ac.jp/pub/Linux/CentOS-vault/6.5/isos/x86_64/
 ```
 
+当然也有别的版本：
+```
+http://ftp.jaist.ac.jp/pub/Linux/CentOS-vault/
+```
+
 ## 打开windows的Hyper-V
 自带的，只要打开服务，就好。
 
