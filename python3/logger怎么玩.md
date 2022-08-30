@@ -1,3 +1,4 @@
+简单的配置：
 ```
 import logging.config
 
