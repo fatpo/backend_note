@@ -1,4 +1,4 @@
-简单的配置：
+python2.7 简单的配置：
 ```
 import logging.config
 
@@ -6,7 +6,7 @@ LOGGING_CONFIG = {
     "version": 1,
     "formatters": {
         "default": {
-            'format': '%(asctime)s %(filename)s %(lineno)s %(levelname)s %(message)s',
+            'format': '%(asctime)s %(filename)s %(lineno)s [%(levelname)s] %(message)s',
         },
         "plain": {
             "format": "%(message)s",
@@ -15,7 +15,7 @@ LOGGING_CONFIG = {
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "level": 20,
+            "level": "DEBUG",
             "filename": "./searchservice_api/log/invalid_request.txt",
             "formatter": "default",
         }
@@ -24,15 +24,28 @@ LOGGING_CONFIG = {
         "file_logger": {
             "handlers": ["file"],
             "level": "DEBUG",
-            "propagate": False,
+            "propagate": True,
         }
     },
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
 }
 
 logging.config.dictConfig(LOGGING_CONFIG)
 invalid_request_logger = logging.getLogger("file_logger")
 
+invalid_request_logger.info("invalid_request_logger init success")
+```
+
+propagate:
+```
+传播，If this evaluates to true, events logged to this logger will be passed to the handlers of higher level (ancestor) loggers, in addition to any handlers attached to this logger. 
+
+我个人理解就是比如你自己的 logger 挂了某个 handler，然后 root 的 logger 挂了 3 个 handler，这个配置打开后，相当于自己的 logger 挂了 4 个 handler。
+```
+
+disable_existing_loggers:
+```
+把其他的 logger 干掉, 默认配置中的logger全部被禁用。被禁用的logger并不是被删除了,它们仍然存在,只是静默地丢弃所有发来的日志请求.
 ```
 
 上面的配置仅仅是打日志，还有类似的更多的配置：
