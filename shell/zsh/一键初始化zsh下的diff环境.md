@@ -1,6 +1,11 @@
+先安装下上传工具：
+```
+apt-get install -y lrzsz
+```
+
+执行下面脚本：
 ```
 #!/bin/bash
-apt-get install -y lrzsz
 apt-get install -y zsh
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -y
@@ -65,4 +70,8 @@ echo "you can exec like this: cd ./diff_total/id; ./diff.sh IP1:8080 IP2:8080 20
 chsh -s /bin/zsh
 ```
 
+请注意：
+```
+如果之前没安装过 zsh，需要执行脚本两次，第一次安装 zsh 会中断这个 shell 的执行，第二次解压 diff 数据。
+```
 
