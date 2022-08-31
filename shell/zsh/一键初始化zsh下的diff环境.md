@@ -5,7 +5,6 @@ apt-get install -y zsh
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -y
 
-chsh -s /bin/zsh
 
 echo "zsh" >> ~/.bashrc
 
@@ -62,6 +61,8 @@ if [ -f "./diff_total.zip" ]; then
 fi
 
 echo "you can exec like this: cd ./diff_total/id; ./diff.sh IP1:8080 IP2:8080 20 10 &"
+
+chsh -s /bin/zsh
 ```
 
 
