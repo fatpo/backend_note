@@ -32,7 +32,7 @@ fi
 
 sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)/g' ~/.zshrc
 
-if [ ! -f "./diff_total.zip" ]; then
+if [ -f "./diff_total.zip" ]; then
   
     unzip ./diff_total.zip
 
@@ -61,3 +61,5 @@ if [ ! -f "./diff_total.zip" ]; then
     head -10000 ./diff_total/my/my.txt > ./diff_total/my/my_10000.txt
 fi
 ```
+
+echo "you can exec like this: cd ./diff_total/id; ./diff.sh IP1:8080 IP2:8080 20 10 &"
