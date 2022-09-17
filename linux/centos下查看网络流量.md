@@ -89,3 +89,7 @@ iftop -nN -i eth0
 这个能看到和具体的IP连接的数据流量，还是很棒的。
 ![image](https://user-images.githubusercontent.com/6395350/190845374-32511eff-d115-4ae9-93cd-45ac864a260a.png)
 
+
+
+## 参考资料
+[https://segmentfault.com/a/1190000022275523](https://segmentfault.com/a/1190000022275523)
