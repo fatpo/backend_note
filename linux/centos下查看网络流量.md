@@ -7,7 +7,10 @@ yum install -y epel-release && yum install -y nload
 ```
 nload
 ```
-会出来一个小界面。
+会出来一个小界面，还是很直观的。
+
+![image](https://user-images.githubusercontent.com/6395350/190845417-7656400b-fd0c-4aa4-bd35-876859bef525.png)
+
 
 ## dstat
 安装:
@@ -43,3 +46,46 @@ usr sys idl wai hiq siq| read  writ| recv  send|  in   out | int   csw
   0   0  99   0   0   0|   0  4096B| 754B 1490B|   0     0 | 649  1162 
   2   2  97   0   0   0|   0   156k| 648B 1270B|   0     0 | 868  1609
 ```
+
+
+## sar
+
+sar 是`System Activity Report`的缩写，是一款全面的Linux系统运行状态统计和性能分析工具，可从磁盘IO、CPU负载、内存使用等多个维度对系统活动进行报告。
+
+sar 命令来自 sysstat 包，可使用这个命令安装：
+```
+yum install -y sysstat
+```
+
+sar -n TCP 1 10可查看接下来10秒内的tcp数据：
+```
+[root@server ~]# sar -n TCP 1 10
+Linux 3.10.0-1160.71.1.el7.x86_64 (rdserver) 	09/17/2022 	_x86_64_	(2 CPU)
+
+03:10:14 PM  active/s passive/s    iseg/s    oseg/s
+03:10:15 PM      1.00      0.00      9.00      8.00
+03:10:16 PM      2.00      0.00     14.00     15.00
+03:10:17 PM      0.00      0.00      1.00      1.00
+03:10:18 PM      0.00      0.00      1.00      1.00
+03:10:19 PM      0.00      0.00      3.00      3.00
+03:10:20 PM      0.00      0.00      2.00      3.00
+03:10:21 PM      0.00      0.00      1.00      1.00
+03:10:22 PM      1.00      0.00      7.00      7.00
+03:10:23 PM      0.00      0.00      1.00      1.00
+03:10:24 PM      0.00      0.00      1.00      1.00
+Average:         0.40      0.00      4.00      4.10
+
+```
+
+## ifto
+安装：
+```
+yum install -y epel-release && yum install -y ifto
+```
+运行：
+```
+iftop -nN -i eth0
+```
+这个能看到和具体的IP连接的数据流量，还是很棒的。
+![image](https://user-images.githubusercontent.com/6395350/190845374-32511eff-d115-4ae9-93cd-45ac864a260a.png)
+
