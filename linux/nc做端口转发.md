@@ -47,3 +47,4 @@ nc agent_ip 3333
 ## 参考资料
 * [https://cloud.tencent.com/developer/article/1688152](https://cloud.tencent.com/developer/article/1688152)
 * [https://onestraw.github.io/cybersecurity/netcat-advanced-usage/](https://onestraw.github.io/cybersecurity/netcat-advanced-usage/)
+* [https://www.cnblogs.com/xtxk110/p/14678178.html](https://www.cnblogs.com/xtxk110/p/14678178.html)
