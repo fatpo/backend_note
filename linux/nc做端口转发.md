@@ -1,5 +1,5 @@
 ## 架构图
-server <---agent--->  data
+server(10.0.12.15) <---agent(10.0.8.9)--->  data(10.0.8.8)
 
 ## nc做转发
 下载nc:
@@ -14,9 +14,18 @@ ncat --sh-exec "ncat 192.168.172.131 80" -l 9876  --keep-open
 ```
 在agent上：
 ```
-ncat --sh-exec "ncat server_ip 8099" -l 9000  --keep-open &
-ncat --sh-exec "ncat data_ip 8098" -l 9001  --keep-open &
+ncat --sh-exec "ncat 10.0.8.8 8098" -l 9000  --keep-open &
+ncat --sh-exec "ncat 10.0.12.15 8099" -l 9001  --keep-open &
 ```
+然后在server上：
+```
+访问： 10.0.8.9:9000 就是访问data:8098端口
+```
+然后在data上：
+```
+访问： 10.0.8.9:9001 就是访问server:8099端口
+```
+
 
 ## nc做中间人通话
 
