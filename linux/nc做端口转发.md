@@ -16,6 +16,9 @@ ncat --sh-exec "ncat 192.168.172.131 80" -l 9876  --keep-open
 ```
 ncat --sh-exec "ncat 10.0.8.8 8098" -l 9000  --keep-open &
 ncat --sh-exec "ncat 10.0.12.15 8099" -l 9001  --keep-open &
+
+ncat --sh-exec "ncat -v -o 11.log 10.0.8.8 8098" -l 9000 --keep-open -o 1.log &
+ncat --sh-exec "ncat -v -o 22.log 10.0.12.15 8099" -l 9001 --keep-open -o 2.log &
 ```
 然后在server上：
 ```
