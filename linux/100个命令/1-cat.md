@@ -14,6 +14,6 @@ cat 作用：
 hello world
 ```
 
-![image](https://user-images.githubusercontent.com/6395350/192806924-2c200617-d647-422e-ab2e-58a652465ef8.png)
+![image](https://user-images.githubusercontent.com/6395350/192832561-c6bd6b5d-aee8-4e71-ad37-2e80dc6072a2.png)
 
 
