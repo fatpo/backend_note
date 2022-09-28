@@ -12,5 +12,8 @@ cat 作用：
 ```                                                                                        
 ~ > cat test.txt                                                                                                                   
 hello world
-
 ```
+
+![image](https://user-images.githubusercontent.com/6395350/192806924-2c200617-d647-422e-ab2e-58a652465ef8.png)
+
+
