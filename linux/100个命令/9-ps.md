@@ -1,0 +1,25 @@
+作用：
+```
+显示当前服务器的进程
+```
+演示：
+```
+[root@rddata web]# ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 9月17 ?       00:00:28 /usr/lib/systemd/systemd --switched-root --system --deserialize 17
+root           2       0  0 9月17 ?       00:00:00 [kthreadd]
+root           3       2  0 9月17 ?       00:00:00 [rcu_gp]
+root           4       2  0 9月17 ?       00:00:00 [rcu_par_gp]
+root           6       2  0 9月17 ?       00:00:00 [kworker/0:0H-events_highpri]
+root           9       2  0 9月17 ?       00:00:00 [mm_percpu_wq]
+root          10       2  0 9月17 ?       00:00:13 [ksoftirqd/0]
+root          11       2  0 9月17 ?       00:02:24 [rcu_sched]
+```
+实战情况下，一般进程太多，需要 `grep` 过滤，比如我们想看 nginx 的进程：
+```
+[root@rddata web]# ps -ef | grep nginx
+root       53399       1  0 9月17 ?       00:00:00 nginx: master process nginx
+root     2243123   53399  0 9月28 ?       00:00:00 nginx: worker process
+root     2243124   53399  0 9月28 ?       00:00:00 nginx: worker process
+root     2423215 2409741  0 15:46 pts/0    00:00:00 grep --color=auto nginx
+```
