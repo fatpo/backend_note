@@ -16,3 +16,7 @@
 -rw-r--r-- 1 root root 25456855 9月  29 00:36 server-0.0.1-SNAPSHOT.jar
 -rw-r--r-- 1 root root     3110 9月  29 14:13 web.log
 ```
+瞬间生成 100 个文件：
+```
+touch file-{001..100}
+```
