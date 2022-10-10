@@ -12,7 +12,7 @@ He turned less into an open source project and over time, various individuals ad
 less is massive now. That's why some small embedded systems have more but not less. 
 For comparison, less's source is over 27000 lines long. more implementations are generally only a little over 2000 lines long.
 ```
-有个哥们，因为老版本的 more 不支持向后滚动，重写了一个 less。
+有个哥们，因为老版本的 more 不支持向后滚动（新版本 more 是支持的），重写了一个 less。
 
 然后他开源了，一堆网友往里面加功能，加着加着就2万多行代码，源代码量是 more 的 15 倍多。
 
@@ -31,8 +31,13 @@ less -N -m 1.txt 2.txt
 ```
 
 ## 交互
-经验来看，用的最高频就`翻页`和`上下行`两个操作。
+经验来看，用的最高频就`翻页`和`上下行`以及`搜索` 3 个操作。
 
+搜索：
+```
+比如想搜索 super 这个单词， 可以输入  /super  或者 ?super
+两者的区别是 / 是从上往下搜索，? 是从下往上搜索
+```
 翻页操作：
 ```
 ctrl + F - 向前移动一屏
