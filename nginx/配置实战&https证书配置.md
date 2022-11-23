@@ -1,3 +1,6 @@
+## 链接
+[CSDN: 使用acme.sh给Nginx配置HTTPS证书](https://blog.csdn.net/aouoy/article/details/115748036)
+
 ## 0. nginx配置项目
 新增配置文件 `cat /etc/nginx/conf.d/haha.conf`：
 ```
