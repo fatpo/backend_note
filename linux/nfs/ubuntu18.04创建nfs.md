@@ -58,6 +58,11 @@ mount -t nfs 1.2.3.4:/data/uploads ./uploads
 
 自此，ubuntu18.04 就可以玩转 nfs 啦。
 
+取消挂载：
+```
+umount ./uploads
+```
+
 后面的只是磁盘相关的知识，可以不看。
 
 
