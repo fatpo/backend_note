@@ -1,5 +1,10 @@
 .idea/
 
+
+*.orig.*
+*.toc.*
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,340 @@
+<!--ts-->
+* [function score](#function-score)
+   * [weight](#weight)
+   * [field_value_factor](#field_value_factor)
+   * [random_score](#random_score)
+   * [衰减函数](#衰减函数)
+      * [属性](#属性)
+      * [举个栗子](#举个栗子)
+      * [衰减函数的 3 种模式](#衰减函数的-3-种模式)
+   * [script_score](#script_score)
+      * [暗戳戳影响搜索结果](#暗戳戳影响搜索结果)
+      * [使用 param 来解耦](#使用-param-来解耦)
+   * [多个 functions 合作](#多个-functions-合作)
+      * [第一个例子是类似于大众点评的餐厅应用](#第一个例子是类似于大众点评的餐厅应用)
+      * [新浪微博的社交网站](#新浪微博的社交网站)
+* [原文](#原文)
+
+<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+<!-- Added by: jianguo.ouyang, at: Fri Jan 13 15:37:57 CST 2023 -->
+
+<!--te-->
+
+# function score
+是一个自定义打分函数的query
+
+## weight
+设置权重
+
+## field_value_factor
+将某个字段的值进行计算得出分数。
+
+* field 指定某个字段
+* factor 对字段初始值的预处理，乘以指定数值，默认是 1
+* modifier 用什么方法来修正分数：
+    * none：不处理
+    * log：计算对数
+    * log1p：先将字段值 +1，再计算对数
+    * log2p：先将字段值 +2，再计算对数
+    * ln：计算自然对数
+    * ln1p：先将字段值 +1，再计算自然对数
+    * ln2p：先将字段值 +2，再计算自然对数
+    * square：计算平方
+    * sqrt：计算平方根
+    * reciprocal：计算倒数
+  
+## random_score
+随机得到 0 到 1 分数
+
+## 衰减函数
+同样以某个字段的值为标准，距离某个值越近得分越高
+### 属性
+* 原点（origin）：该字段最理想的值，这个值可以得到满分（1.0）
+* 偏移量（offset）：与原点相差在偏移量之内的值也可以得到满分
+* 衰减规模（scale）：当值超出了原点到偏移量这段范围，它所得的分数就开始进行衰减了，衰减规模决定了这个分数衰减速度的快慢
+* 衰减值（decay）：该字段可以被接受的值（默认为 0.5），相当于一个分界点，具体的效果与衰减的模式有关
+### 举个栗子
+例子1:
+* 买东西，心理预期价格 50 元
+* 但是我们不可能非 50 元就不买，而是会划定一个可接受的价格范围，例如 45-55 元，±5 就为偏移量
+* 当价格超出了可接受的范围，就会让人觉得越来越不值。如果价格是 70 元，评价可能是不太想买，而如果价格是 200 元，评价则会是不可能会买，这就是由衰减规模和衰减值所组成的一条衰减曲线
+
+例子 2：
+* 我们想租一套房，它的理想位置是公司附近
+* 如果离公司在 5km 以内，是我们可以接受的范围，在这个范围内我们不去考虑距离，而是更偏向于其他信息
+* 当距离超过 5km 时，我们对这套房的评价就越来越低了，直到超出了某个范围就再也不会考虑了
+
+
+### 衰减函数的 3 种模式
+* 线性函数（linear）
+* 以 e 为底的指数函数（Exp）
+* 高斯函数（gauss）
+
+![衰减函数.png](衰减函数.png)
+
+例子 2的 dsl:
+```json
+{
+  "query":
+  {
+    "function_score":
+    {
+      "query":
+      {
+        "match":
+        {
+          "title": "公寓"
+        }
+      },
+      "gauss":
+      {
+        "location":
+        {
+          "origin":
+          {
+            "lat": 40,
+            "lon": 116
+          },
+          "offset": "5km",
+          "scale": "10km"
+        }
+      },
+      "boost_mode": "sum"
+    }
+  }
+}
+```
+
+
+## script_score
+通过自定义脚本计算分值。
+
+
+### 暗戳戳影响搜索结果
+假设我们有一批门店，用户搜索 `云南大理`，我就想把云南大理的门店给推给他们。
+
+此时此刻，有一个活动，要宣传电影节，我们想要把类别为电影院的门店（es 字段：category）提到靠前的地方。
+
+要求是，暗戳戳去影响搜索结果，不能明目张胆得把非电影院的都 filter 掉。
+
+想了下，应该用 `boost` 之类的给电影院的提分，难道用：
+```json
+{
+  "query": {
+    "match": {
+      "category": "电影院",
+      "boost": 2.0
+    }
+  }
+}
+```
+
+不行啊，人家根本不会搜`电影院`，人家搜的都是`天安门`,`kfc`, `附近五星`。
+
+我又不能直接把电影院加到 query 中，怎么才能做到`暗戳戳`的影响呢？
+
+这时用 `field_value_factor` 和 `weight` 貌似都做不到啊。
+
+怎么办呢？
+
+在 dsl 中使用 script_score:
+```json
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "name": "天安门"
+        }
+      },
+      "script_score": {
+        "script": "return doc ['category'].value == '电影院' ? 1.1 : 1.0"
+      }
+    }
+  }
+}
+```
+或者把script保存到：`elasticsearch/config/scripts`，然后 dsl 引用它：
+```json
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "name": "天安门"
+        }
+      },
+      "script_score": {
+        "script": {
+         "file": "category-score"
+        }
+      }
+    }
+  }
+}
+```
+
+
+### 使用 param 来解耦
+我们不要可以把参数从script中提出来，稍微做到了解耦：
+```json
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "name": "天安门"
+        }
+      },
+      "script_score": {
+        "script": {
+          "source": "return doc ['category'].value == recommend_category ? 1.1 : 1.0",
+          "params": {
+            "recommend_category": "电影院"
+          }
+        }
+      }
+    }
+  }
+}
+```
+或者用 file 的方式，不用去改动脚本的内容，也是解耦：
+```json
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "name": "天安门"
+        }
+      },
+      "script_score": {
+        "script": {
+         "file": "category-score",
+         "params": {
+            "recommend_category": "电影院"
+         }
+        }
+      }
+    }
+  }
+}
+```
+
+## 多个 functions 合作
+
+### 第一个例子是类似于大众点评的餐厅应用
+
+该应用希望向用户推荐一些不错的餐馆，特征是：
+* 范围要在当前位置的 5km 以内
+* 有停车位是最重要的
+* 有 Wi-Fi 更好
+* 餐厅的评分（1 分到 5 分）越高越好
+* 并且对不同用户最好展示不同的结果以增加随机性
+
+dsl 如下：
+```text
+{
+  "query": {
+    "function_score": {
+      "filter": {
+        "geo_distance": {
+          "distance": "5km",
+          "location": {
+            "lat": $lat,
+            "lon": $lng
+          }
+        }
+      },
+      "functions": [
+        {
+          "filter": {
+            "term": {
+              "features": "wifi"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "filter": {
+            "term": {
+              "features": "停车位"
+            }
+          },
+          "weight": 2
+        },
+        {
+            "field_value_factor": {
+               "field": "score",
+               "factor": 1.2
+             }
+        },
+        {
+          "random_score": {
+            "seed": "$id"
+          }
+        }
+      ],
+      "score_mode": "sum",
+      "boost_mode": "multiply"
+    }
+  }
+}
+```
+
+### 新浪微博的社交网站
+现在要优化搜索功能，使其以文本相关度排序为主，但是：
+* 越新的微博会排在相对靠前的位置
+* 点赞（忽略相同计算方式的转发和评论）数较高的微博也会排在较前面
+* 如果这篇微博购买了推广并且是创建不到 24 小时（同时满足），它的位置会非常靠前。
+
+dsl如下：
+```text
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "content": "$text"
+        }
+      },
+      "functions": [
+        {
+          "gauss": {
+            "createDate": {
+              "origin": "$now",
+              "scale": "6d",
+              "offset": "1d"
+            }
+          }
+        },
+        {
+          "field_value_factor": {
+            "field": "like_count",
+            "modifier": "log1p",
+            "factor": 0.1
+          }
+        },
+        {
+          "script_score": {
+            "script": "return doc ['is_recommend'].value && doc ['create_date'] > time ? 1.5 : 1.0",
+            params: {
+                "time": $time
+            }
+          }
+        }
+      ],
+      "boost_mode": "multiply"
+    }
+  }
+}
+```
+
+公式：
+```text
+_score * gauss (create_date, $now, "1d", "6d") * log (1 + 0.1 * like_count) * (is_recommend & doc ['create_date'] > time  ? 1.5 : 1.0)
+```
+
+
+# 原文
+[https://www.scienjus.com/elasticsearch-function-score-query/](https://www.scienjus.com/elasticsearch-function-score-query/)
