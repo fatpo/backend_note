@@ -24,7 +24,36 @@
 是一个自定义打分函数的query
 
 ## weight
-设置权重，我印象中每次都是用于多functions中的 weight 打分。
+设置权重，我印象中每次都是用于多functions中的 filter + weight 打分，命中一个加 N 分，类似这样子。
+dsl：
+```text
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "filter": {
+        "term": { "city": "Barcelona" }
+      },
+      "functions": [
+        {
+          "filter": { "term": { "features": "wifi" }},
+          "weight": 1
+        },
+        {
+          "filter": { "term": { "features": "garden" }},
+          "weight": 1
+        },
+        {
+          "filter": { "term": { "features": "pool" }},
+          "weight": 2
+        }
+      ],
+      "score_mode": "sum"
+    }
+  }
+}
+```
+
 
 ## field_value_factor
 将某个字段的值进行计算得出分数。
