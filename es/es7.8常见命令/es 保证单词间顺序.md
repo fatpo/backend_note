@@ -36,7 +36,7 @@ curl -XGET 'http://127.0.0.1:9200/2022-10-26/_search?pretty'  -H "Content-Type: 
     "intervals": {
       "content": {
         "match": {
-          "query": "need  service",
+          "query": "need service",
           "max_gaps": -1,
           "ordered": true
         }
