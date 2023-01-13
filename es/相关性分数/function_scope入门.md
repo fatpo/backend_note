@@ -24,7 +24,7 @@
 是一个自定义打分函数的query
 
 ## weight
-设置权重
+设置权重，我印象中每次都是用于多functions中的 weight 打分。
 
 ## field_value_factor
 将某个字段的值进行计算得出分数。
@@ -43,8 +43,108 @@
     * sqrt：计算平方根
     * reciprocal：计算倒数
   
+举个栗子： 有一个需求，门店看得人越多，就越靠前，但是要避免马太效应，所以不能无脑根据门店的查看数倒序。
+请问怎么办？
+
+假设门店有一个字段：`view_num`，我们自定义分数：
+```text
+GET /store/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query": "kfc",
+          "fields": ["tile", "content"]
+        }
+      },
+      "field_value_factor": {
+        "field": "view_num",
+        "modifier": "log1p",
+        "factor": 0.5
+      },
+      "boost_mode": "sum",
+      "max_boost": 2
+    }
+  }
+}
+```
+解读下：
+* log1p是一个函数，用于对字段分数进行修正：
+    ```
+    new_score = old_score * log(1 + factor * follower_num)
+    ```
+* boost_mode，用于决定最终doc分数与指定字段的值如何计算：
+    ```
+    multiply，sum，min，max，replace
+    ```
+* max_boost，用于限制计算出来的分数不要超过max_boost指定的值。
+
 ## random_score
-随机得到 0 到 1 分数
+随机得到 0 到 1 分数，我本来也不是很理解这个东西的使用场景，直到看到这个需求：
+```text
+作为网站的所有者，总会希望让广告有更高的展现率。
+在当前查询下，有相同评分 _score 的文档会每次都以相同次序出现。
+为了提高展现率，在此引入一些随机性可能会是个好主意，这能保证有相同评分的文档都能有均等相似的展现机率。
+
+我们想让每个用户看到不同的随机次序，但也同时希望如果是同一用户翻页浏览时，结果的相对次序能始终保持一致。
+这种行为被称为 一致随机（consistently random）。
+
+random_score 函数会输出一个 0 到 1 之间的数， 当种子 seed 值相同时，生成的随机结果是一致的。
+例如，将用户的会话 ID 作为 seed。
+```
+dsl 如下：
+```text
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "random_score": {
+        "seed": 10,
+        "field": "_seq_no"
+      }
+    }
+  }
+}
+```
+复杂的 dsl 如下：
+```text
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "filter": {
+        "term": { "city": "Barcelona" }
+      },
+      "functions": [
+        {
+          "filter": { "term": { "features": "wifi" }},
+          "weight": 1
+        },
+        {
+          "filter": { "term": { "features": "garden" }},
+          "weight": 1
+        },
+        {
+          "filter": { "term": { "features": "pool" }},
+          "weight": 2
+        },
+        {
+          "random_score": { 
+            "seed":  "the users session id" 
+          }
+        }
+      ],
+      "score_mode": "sum"
+    }
+  }
+}
+```
+这个 dsl 实现了：
+* random_score 语句没有任何过滤器 filter ，所以会被应用到所有文档。
+* 将用户的会话 ID 作为种子 seed ，让该用户的随机始终保持一致，相同的种子 seed 会产生相同的随机结果。
+
+
 
 ## 衰减函数
 同样以某个字段的值为标准，距离某个值越近得分越高
