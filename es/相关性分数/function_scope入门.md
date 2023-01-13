@@ -1,5 +1,7 @@
 <!--ts-->
 * [function score](#function-score)
+   * [filter vs query](#filter-vs-query)
+   * [boost_mode vs score_mode](#boost_mode-vs-score_mode)
    * [weight](#weight)
    * [field_value_factor](#field_value_factor)
    * [random_score](#random_score)
@@ -13,15 +15,66 @@
    * [多个 functions 合作](#多个-functions-合作)
       * [第一个例子是类似于大众点评的餐厅应用](#第一个例子是类似于大众点评的餐厅应用)
       * [新浪微博的社交网站](#新浪微博的社交网站)
-* [原文](#原文)
+* [原文搬运](#原文搬运)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-<!-- Added by: jianguo.ouyang, at: Fri Jan 13 15:37:57 CST 2023 -->
+<!-- Added by: jianguo.ouyang, at: Fri Jan 13 18:39:15 CST 2023 -->
 
 <!--te-->
 
 # function score
 是一个自定义打分函数的query
+
+fsq(function score query) 的结构大致如下：
+```json
+{
+  "filter": {},
+  "query": {},
+  "functions": [],
+  "boost_mode": "sum",
+  "score_mode": "sum",
+  "field_value_factor": {},
+  "random_score": {},
+  "script_score": {}
+}
+```
+下面会一一介绍。
+
+## filter vs query
+有些时候我们无须使用全文搜索，只想找到 es 字段中包含 query 的所有文档，逻辑用过滤比用查询表达更清晰。
+
+过滤器返回的所有文档的评分 _score 的值为 1 。 
+
+function_score 查询接受 query 或 filter ，如果没有特别指定，则默认使用 `match_all` 查询。
+
+## boost_mode vs score_mode
+
+首先，每个文档由定义的函数打分。
+
+参数 `score_mode` 规定计算的分数如何组合：
+
+|类型|解释|
+|:---|:---|
+|multiply | 分数相乘（默认）|
+|sum|得分相加|
+|avg|平均分数|
+|first |使用具有匹配过滤器的第一个函数|
+|max|最大得分|
+|min|最小分数|
+
+因为有可能会用到 `functionscore(fsq)` 来替换es 默认打分，这里引进了`boost_mode`。
+
+新计算的分数与查询的分数相组合，参数 `boost_mode`定义其组合方式：
+
+|类型|解释|
+|:---|:---|
+|multiply|查询得分和函数得分相乘（默认）|
+|replace|仅使用函数得分，忽略查询得分|
+|sum|查询得分和函数得分相加|
+|avg|取平均值|
+|max|查询得分和函数得分的最大值|
+|min|查询得分和函数得分的最小值|
+
 
 ## weight
 设置权重，我印象中每次都是用于多functions中的 filter + weight 打分，命中一个加 N 分，类似这样子。
