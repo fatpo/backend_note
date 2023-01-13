@@ -465,5 +465,7 @@ _score * gauss (create_date, $now, "1d", "6d") * log (1 + 0.1 * like_count) * (i
 ```
 
 
-# 原文
-[https://www.scienjus.com/elasticsearch-function-score-query/](https://www.scienjus.com/elasticsearch-function-score-query/)
+# 原文搬运
+* [通过Function Score Query优化Elasticsearch搜索结果](https://www.scienjus.com/elasticsearch-function-score-query/)
+* [随机评分 | Elasticsearch: 权威指南 | Elastic](http://www.lvesu.com/blog/es/random-scoring.html)
+* [官网文档function score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html)
