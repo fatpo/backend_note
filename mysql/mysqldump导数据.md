@@ -1,11 +1,17 @@
-简单把结构导出来：
+## 简单把结构导出来
 ```
 mysqldump -h localhost -uroot -p  -d mydb --skip-create-options > dump.sql
 ```
 其中`--skip-create-options`是避免 auto_increment的困扰，从 1 开始。
 
+怎么看表的 auto_increment:
+```
+select table_name, AUTO_INCREMENT From INFORMATION_SCHEMA. TABLES where AUTO_INCREMENT is not null;
+```
 
-更多命令（[https://www.cnblogs.com/qmfsun/p/5405599.html](https://www.cnblogs.com/qmfsun/p/5405599.html)）：
+
+## 更多命令
+链接：[https://www.cnblogs.com/qmfsun/p/5405599.html](https://www.cnblogs.com/qmfsun/p/5405599.html)
 ```
 mysqldump -u用戶名 -p密码 -d 数据库名 表名 > 脚本名;
 
@@ -35,6 +41,7 @@ mysqldump 备份导出数据排除某张表
 mysqldump -uusername -ppassword -h192.168.0.1 -P3306 dbname --ignore-table=dbname.dbtanles > dump.sql
 ```
 
+## 导入 mysql
 导入到 mysql 中：
 ```
 首先要进入 mysql
