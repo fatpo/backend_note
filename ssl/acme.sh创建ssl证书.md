@@ -17,6 +17,29 @@ https://github.com/acmesh-official/acme.sh
 在用 acme 命令前，nginx 不要提前配置 443 端口！！
 ```
 
+安装脚本：
+```
+curl  https://get.acme.sh | sh
+
+alias acme.sh=~/.acme.sh/acme.sh
+echo 'alias acme.sh=~/.acme.sh/acme.sh' >>/etc/profile
+```
+
+如果下面执行命令的时候，遇到这个错误，还要申请账号：
+```
+[Thu Feb  2 06:37:13 UTC 2023] acme.sh is using ZeroSSL as default CA now.
+[Thu Feb  2 06:37:13 UTC 2023] Please update your account with an email address first.
+[Thu Feb  2 06:37:13 UTC 2023] acme.sh --register-account -m my@example.com
+[Thu Feb  2 06:37:13 UTC 2023] See: https://github.com/acmesh-official/acme.sh/wiki/ZeroSSL.com-CA
+[Thu Feb  2 06:37:13 UTC 2023] _on_issue_err
+[Thu Feb  2 06:37:13 UTC 2023] Please add '--debug' or '--log' to check more details.
+[Thu Feb  2 06:37:13 UTC 2023] See: https://github.com/acmesh-official/acme.sh/wiki/How-to-debug-acme.sh
+[Thu Feb  2 06:37:13 UTC 2023] socat doesn't exist.
+
+
+acme.sh --register-account -m my@example.com
+```
+
 
 第一次申请证书，让我们弄个账户：
 ```
