@@ -1,8 +1,7 @@
 ## 简单把结构导出来
 ```
-mysqldump -h localhost -uroot -p  -d mydb --skip-create-options > dump.sql
+mysqldump -h localhost -uroot -p  -d mydb  > dump.sql
 ```
-其中`--skip-create-options`是避免 auto_increment的困扰，从 1 开始。
 
 怎么看表的 auto_increment:
 ```
