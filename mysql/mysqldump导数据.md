@@ -1,7 +1,8 @@
 简单把结构导出来：
 ```
-mysqldump -h localhost -uroot -p  -d mydb > dump.sql
+mysqldump -h localhost -uroot -p  -d mydb --skip-create-options > dump.sql
 ```
+其中`--skip-create-options`是避免 auto_increment的困扰，从 1 开始。
 
 
 更多命令（[https://www.cnblogs.com/qmfsun/p/5405599.html](https://www.cnblogs.com/qmfsun/p/5405599.html)）：
@@ -32,4 +33,10 @@ mysqldump 备份导出数据排除某张表
 就用 --ignore-table=dbname.tablename参数就行了。
 
 mysqldump -uusername -ppassword -h192.168.0.1 -P3306 dbname --ignore-table=dbname.dbtanles > dump.sql
+```
+
+导入到 mysql 中：
+```
+首先要进入 mysql
+mysql> source /tmp/dump2.sql;
 ```
